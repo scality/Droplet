@@ -52,9 +52,9 @@ dpl_close(dpl_vfile_t *vfile)
               else
                 {
                   //compare MD5 with etag
-                  u_char digest[MD5_DIGEST_LENGTH];
+                  unsigned char digest[MD5_DIGEST_LENGTH];
                   char bcd_digest[DPL_BCD_LENGTH(MD5_DIGEST_LENGTH) + 1];
-                  u_int bcd_digest_len;
+                  unsigned int bcd_digest_len;
 
                   MD5_Final(digest, &vfile->md5_ctx);
 
@@ -103,8 +103,8 @@ encrypt_init(dpl_vfile_t *vfile,
   int ret;
   const EVP_CIPHER *cipher;
   const EVP_MD *md;
-  u_char key[EVP_MAX_KEY_LENGTH];
-  u_char iv[EVP_MAX_IV_LENGTH];
+  unsigned char key[EVP_MAX_KEY_LENGTH];
+  unsigned char iv[EVP_MAX_IV_LENGTH];
 
   if (NULL == vfile->ctx->encrypt_key)
     {
@@ -136,7 +136,7 @@ encrypt_init(dpl_vfile_t *vfile,
       goto end;
     }
 
-  EVP_BytesToKey(cipher, md, vfile->salt, (u_char *) vfile->ctx->encrypt_key, strlen(vfile->ctx->encrypt_key), 1, key, iv);
+  EVP_BytesToKey(cipher, md, vfile->salt, (unsigned char *) vfile->ctx->encrypt_key, strlen(vfile->ctx->encrypt_key), 1, key, iv);
 
   EVP_CipherInit(vfile->cipher_ctx, cipher, key, iv, enc);
 
@@ -150,10 +150,10 @@ encrypt_init(dpl_vfile_t *vfile,
 dpl_status_t
 dpl_openwrite(dpl_ctx_t *ctx,
               char *locator,
-              u_int flags,
+              unsigned int flags,
               dpl_dict_t *metadata,
               dpl_canned_acl_t canned_acl,
-              u_int data_len,
+              unsigned int data_len,
               dpl_vfile_t **vfilep)
 {
   dpl_vfile_t *vfile = NULL;
@@ -357,7 +357,7 @@ dpl_openwrite(dpl_ctx_t *ctx,
 dpl_status_t
 dpl_write(dpl_vfile_t *vfile,
           char *buf,
-          u_int len)
+          unsigned int len)
 {
   int ret, ret2;
   struct iovec iov[10];
@@ -396,7 +396,7 @@ dpl_write(dpl_vfile_t *vfile,
           goto end;
         }
 
-      ret = EVP_CipherUpdate(vfile->cipher_ctx, (u_char *) obuf, &olen, (u_char *) buf, len);
+      ret = EVP_CipherUpdate(vfile->cipher_ctx, (unsigned char *) obuf, &olen, (unsigned char *) buf, len);
       if (0 == ret)
         {
           DPLERR(0, "CipherUpdate failed\n");
@@ -466,7 +466,7 @@ cb_vfile_header(void *cb_arg,
 static dpl_status_t
 cb_vfile_buffer(void *cb_arg,
                 char *buf,
-                u_int len)
+                unsigned int len)
 {
   dpl_vfile_t *vfile = (dpl_vfile_t *) cb_arg;
   char *obuf = NULL;
@@ -477,8 +477,8 @@ cb_vfile_buffer(void *cb_arg,
     {
       if (0 == vfile->header_done)
         {
-          u_int magic_len;
-          u_int header_len;
+          unsigned int magic_len;
+          unsigned int header_len;
 
           magic_len = strlen(DPL_ENCRYPT_MAGIC);
 
@@ -511,7 +511,7 @@ cb_vfile_buffer(void *cb_arg,
           goto end;
         }
 
-      ret2 = EVP_CipherUpdate(vfile->cipher_ctx, (u_char *) obuf, &olen, (u_char *) buf, len);
+      ret2 = EVP_CipherUpdate(vfile->cipher_ctx, (unsigned char *) obuf, &olen, (unsigned char *) buf, len);
       if (0 == ret2)
         {
           DPLERR(0, "CipherUpdate failed\n");
@@ -546,7 +546,7 @@ cb_vfile_buffer(void *cb_arg,
 dpl_status_t
 dpl_openread(dpl_ctx_t *ctx,
              char *locator,
-             u_int flags,
+             unsigned int flags,
              dpl_condition_t *condition,
              dpl_buffer_func_t buffer_func,
              void *cb_arg,
@@ -671,12 +671,12 @@ dpl_openread(dpl_ctx_t *ctx,
 dpl_status_t
 dpl_openread_range(dpl_ctx_t *ctx,
                    char *locator,
-                   u_int flags,
+                   unsigned int flags,
                    dpl_condition_t *condition,
                    int start,
                    int end,
                    char **data_bufp,
-                   u_int *data_lenp,
+                   unsigned int *data_lenp,
                    dpl_dict_t **metadatap)
 {
   int ret, ret2;
@@ -947,8 +947,8 @@ dpl_fgenurl(dpl_ctx_t *ctx,
             char *locator,
             time_t expires,
             char *buf,
-            u_int len,
-            u_int *lenp)
+            unsigned int len,
+            unsigned int *lenp)
 {
   int ret, ret2;
   dpl_ino_t obj_ino;

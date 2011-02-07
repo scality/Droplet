@@ -465,11 +465,11 @@ static dpl_status_t
 dpl_vdir_count_entries(dpl_ctx_t *ctx,
                        char *bucket,
                        dpl_ino_t ino,
-                       u_int *n_entriesp)
+                       unsigned int *n_entriesp)
 {
   void *dir_hdl = NULL;
   int ret, ret2;
-  u_int n_entries = 0;
+  unsigned int n_entries = 0;
   dpl_dirent_t dirent;
 
   ret2 = dpl_vdir_opendir(ctx, bucket, ino, &dir_hdl);
@@ -513,7 +513,7 @@ dpl_vdir_rmdir(dpl_ctx_t *ctx,
                dpl_ino_t parent_ino,
                const char *obj_name)
 {
-  u_int n_entries = 0;
+  unsigned int n_entries = 0;
   dpl_ino_t ino;
   int ret, ret2;
   int obj_name_len = strlen(obj_name);
@@ -572,7 +572,7 @@ dpl_iname(dpl_ctx_t *ctx,
           char *bucket,
           dpl_ino_t ino,
           char *path,
-          u_int path_len)
+          unsigned int path_len)
 {
   DPL_TRACE(ctx, DPL_TRACE_VDIR, "iname bucket=%s ino=%s", bucket, ino.key);
 

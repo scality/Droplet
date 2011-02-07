@@ -104,11 +104,11 @@ dpl_dump_init(struct dpl_dump_ctx *ctx)
 
 void
 dpl_dump_line(struct dpl_dump_ctx *ctx,
-              u_int off,
-              u_char *b,
-              u_int l)
+              unsigned int off,
+              unsigned char *b,
+              unsigned int l)
 {
-  u_int i;
+  unsigned int i;
 
   //printf("l=%d prevb_inited=%d star_displayed=%d\n", l, ctx->prevb_inited, ctx->star_displayed);
 
@@ -164,8 +164,8 @@ dpl_dump(struct dpl_dump_ctx *ctx,
          int len)
 {
   int i;
-  u_char b[DPL_DUMP_LINE_SIZE];
-  u_int l;
+  unsigned char b[DPL_DUMP_LINE_SIZE];
+  unsigned int l;
 
   l = 0;
   i = 0;
@@ -208,7 +208,7 @@ dpl_dump_simple(char *buf,
 
 void
 dpl_trace(dpl_ctx_t *ctx,
-          u_int level,
+          unsigned int level,
           char *file,
           int lineno,
           char *fmt,
@@ -410,20 +410,20 @@ dpl_strlower(char *str)
  *
  * @return digest_len
  */
-u_int
+unsigned int
 dpl_hmac_sha1(char *key_buf,
-              u_int key_len,
+              unsigned int key_len,
               char *data_buf,
-              u_int data_len,
+              unsigned int data_len,
               char *digest_buf)
 {
   HMAC_CTX ctx;
-  u_int digest_len;
+  unsigned int digest_len;
 
   HMAC_CTX_init(&ctx);
   HMAC_Init_ex(&ctx, key_buf, key_len, EVP_sha1(), NULL);
-  HMAC_Update(&ctx, (u_char *) data_buf, data_len);
-  HMAC_Final(&ctx, (u_char *) digest_buf, &digest_len);
+  HMAC_Update(&ctx, (unsigned char *) data_buf, data_len);
+  HMAC_Final(&ctx, (unsigned char *) digest_buf, &digest_len);
   HMAC_CTX_cleanup(&ctx);
 
   return digest_len;
@@ -438,9 +438,9 @@ dpl_hmac_sha1(char *key_buf,
  *
  * @return out_len
  */
-u_int
+unsigned int
 dpl_base64_encode(const unsigned char *in_buf,
-                  u_int in_len,
+                  unsigned int in_len,
                   char *out_buf)
 {
   static const char *base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -545,13 +545,13 @@ dpl_url_decode(char *str)
 
 /**/
 
-u_int
-dpl_bcd_encode(u_char *in_buf,
-               u_int in_len,
+unsigned int
+dpl_bcd_encode(unsigned char *in_buf,
+               unsigned int in_len,
                char *out_buf)
 {
   int i;
-  u_int out_len = 0;
+  unsigned int out_len = 0;
 
   for (i = 0;i < in_len;i++)
     {

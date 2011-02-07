@@ -35,12 +35,12 @@ dpl_list_all_my_buckets(dpl_ctx_t *ctx,
   char          *host = NULL;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
   char          *data_buf = NULL;
-  u_int         data_len;
+  unsigned int  data_len;
   dpl_vec_t     *vec = NULL;
   dpl_dict_t    *headers_request = NULL;
   dpl_dict_t    *headers_reply = NULL;
@@ -213,12 +213,12 @@ dpl_list_bucket(dpl_ctx_t *ctx,
   int           ret, ret2;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
   char          *data_buf = NULL;
-  u_int         data_len;
+  unsigned int  data_len;
   dpl_vec_t     *objects = NULL;
   dpl_vec_t     *common_prefixes = NULL;
   dpl_dict_t    *query_params = NULL;
@@ -438,13 +438,13 @@ dpl_make_bucket(dpl_ctx_t *ctx,
   int           ret, ret2;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
   char          *location_constraint_str;
   char          data_str[1024];
-  u_int         data_len;
+  unsigned int  data_len;
   dpl_dict_t    *headers_request = NULL;
   dpl_dict_t    *headers_reply = NULL;
   dpl_req_t     *req = NULL;
@@ -623,7 +623,7 @@ dpl_deletebucket(dpl_ctx_t *ctx,
   int           ret, ret2;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
@@ -774,13 +774,13 @@ dpl_put(dpl_ctx_t *ctx,
             dpl_dict_t *metadata,
             dpl_canned_acl_t canned_acl,
             char *data_buf,
-            u_int data_len)
+            unsigned int data_len)
 {
   char          *host;
   int           ret, ret2;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
@@ -949,14 +949,14 @@ dpl_put_buffered(dpl_ctx_t *ctx,
                  char *subresource,
                  dpl_dict_t *metadata,
                  dpl_canned_acl_t canned_acl,
-                 u_int data_len,
+                 unsigned int data_len,
                  dpl_conn_t **connp)
 {
   char          *host;
   int           ret, ret2;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
@@ -1141,19 +1141,19 @@ dpl_get(dpl_ctx_t *ctx,
         char *subresource,
         dpl_condition_t *condition,
         char **data_bufp,
-        u_int *data_lenp,
+        unsigned int *data_lenp,
         dpl_dict_t **metadatap)
 {
   char          *host;
   int           ret, ret2;
   dpl_conn_t   *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
   char          *data_buf = NULL;
-  u_int         data_len;
+  unsigned int  data_len;
   dpl_dict_t    *headers_request = NULL;
   dpl_dict_t    *headers_reply = NULL;
   dpl_dict_t    *metadata = NULL;
@@ -1353,19 +1353,19 @@ dpl_get_range(dpl_ctx_t *ctx,
               int start,
               int end,
               char **data_bufp,
-              u_int *data_lenp,
+              unsigned int *data_lenp,
               dpl_dict_t **metadatap)
 {
   char          *host;
   int           ret, ret2;
   dpl_conn_t   *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
   char          *data_buf = NULL;
-  u_int         data_len;
+  unsigned int  data_len;
   dpl_dict_t    *headers_request = NULL;
   dpl_dict_t    *headers_reply = NULL;
   dpl_dict_t    *metadata = NULL;
@@ -1586,7 +1586,7 @@ cb_get_header(void *cb_arg,
 static dpl_status_t
 cb_get_buffer(void *cb_arg,
               char *buf,
-              u_int len)
+              unsigned int len)
 {
   struct get_conven *gc = (struct get_conven *) cb_arg;
   int ret;
@@ -1615,7 +1615,7 @@ dpl_get_buffered(dpl_ctx_t *ctx,
   int           ret, ret2;
   dpl_conn_t   *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   dpl_dict_t    *headers_request = NULL;
@@ -1784,7 +1784,7 @@ dpl_head_gen(dpl_ctx_t *ctx,
   int           ret, ret2;
   dpl_conn_t   *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
@@ -1999,7 +1999,7 @@ dpl_delete(dpl_ctx_t *ctx,
   int           ret, ret2;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;
@@ -2156,8 +2156,8 @@ dpl_genurl(dpl_ctx_t *ctx,
            char *subresource,
            time_t expires,
            char *buf,
-           u_int len,
-           u_int *lenp)
+           unsigned int len,
+           unsigned int *lenp)
 {
   int           ret, ret2;
   dpl_dict_t    *headers_request = NULL;
@@ -2266,7 +2266,7 @@ dpl_copy(dpl_ctx_t *ctx,
   int           ret, ret2;
   dpl_conn_t    *conn = NULL;
   char          header[1024];
-  u_int         header_len;
+  unsigned int  header_len;
   struct iovec  iov[10];
   int           n_iov = 0;
   int           connection_close = 0;

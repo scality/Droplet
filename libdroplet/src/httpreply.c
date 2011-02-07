@@ -608,9 +608,9 @@ dpl_connection_close(dpl_dict_t *headers_returned)
  */
 struct httreply_conven
 {
-  char *data_buf;
-  u_int data_len;
-  dpl_dict_t *headers;
+  char          *data_buf;
+  unsigned int  data_len;
+  dpl_dict_t    *headers;
 };
 
 static dpl_status_t
@@ -638,7 +638,7 @@ cb_httpreply_header(void *cb_arg,
 static dpl_status_t
 cb_httpreply_buffer(void *cb_arg,
                     char *buf,
-                    u_int len)
+                    unsigned int len)
 {
   struct httreply_conven *hc = (struct httreply_conven *) cb_arg;
 
@@ -682,7 +682,7 @@ dpl_status_t
 dpl_read_http_reply(dpl_conn_t *conn,
                     int expect_data,
                     char **data_bufp,
-                    u_int *data_lenp,
+                    unsigned int *data_lenp,
                     dpl_dict_t **headersp)
 {
   int ret, ret2;

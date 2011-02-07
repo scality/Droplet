@@ -23,12 +23,12 @@
 
 dpl_ctx_t *dpl_default_conn_ctx = NULL;
 
-static u_int
+static unsigned int
 conn_hashcode(const unsigned char *data,
               size_t len)
 {
   const unsigned char *p;
-  u_int h, g;
+  unsigned int h, g;
   int i = 0;
 
   h = g = 0;
@@ -48,9 +48,9 @@ conn_hashcode(const unsigned char *data,
 static dpl_conn_t *
 dpl_conn_get_nolock(dpl_ctx_t *ctx,
                     struct in_addr addr,
-                    u_short port)
+                    unsigned short port)
 {
-  u_int bucket;
+  unsigned int bucket;
   struct dpl_hash_info hash_info;
   dpl_conn_t *conn;
 
@@ -73,7 +73,7 @@ dpl_conn_get_nolock(dpl_ctx_t *ctx,
 static void
 dpl_conn_add_nolock(dpl_conn_t *conn)
 {
-  u_int bucket;
+  unsigned int bucket;
 
   bucket = conn_hashcode((char *) &conn->hash_info, sizeof (conn->hash_info)) % conn->ctx->n_conn_buckets;
 
@@ -91,7 +91,7 @@ static void
 dpl_conn_remove_nolock(dpl_ctx_t *ctx,
                        dpl_conn_t *conn)
 {
-  u_int bucket;
+  unsigned int bucket;
 
   bucket = conn_hashcode((char *) &conn->hash_info, sizeof (conn->hash_info)) % ctx->n_conn_buckets;
 
@@ -154,7 +154,7 @@ dpl_conn_terminate_nolock(dpl_conn_t *conn)
 static int
 do_connect(dpl_ctx_t *ctx,
            struct in_addr addr,
-           u_int port)
+           unsigned int port)
 {
   struct sockaddr_in sin;
   int   fd = -1;
@@ -248,7 +248,7 @@ do_connect(dpl_ctx_t *ctx,
 dpl_conn_t *
 dpl_conn_open(dpl_ctx_t *ctx,
               struct in_addr addr,
-              u_int port)
+              unsigned int port)
 {
   dpl_conn_t *conn = NULL;
   time_t now = time(0);
@@ -369,7 +369,7 @@ dpl_conn_open(dpl_ctx_t *ctx,
 dpl_conn_t *
 dpl_conn_open_host(dpl_ctx_t *ctx,
                    char *host,
-                   u_int port)
+                   unsigned int port)
 {
   int           ret2;
   struct hostent hret, *hresult;
@@ -584,7 +584,7 @@ writev_all_ssl(dpl_conn_t *conn,
                int timeout)
 {
   int i, ret;
-  u_int total_size, off;
+  unsigned int total_size, off;
   char *ptr = NULL;
 
   total_size = 0;

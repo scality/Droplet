@@ -151,14 +151,14 @@ dpl_req_set_subresource(dpl_req_t *req,
 
 void
 dpl_req_add_behavior(dpl_req_t *req,
-                     u_int flags)
+                     unsigned int flags)
 {
   req->behavior_flags |= flags;
 }
 
 void
 dpl_req_rm_behavior(dpl_req_t *req,
-                    u_int flags)
+                    unsigned int flags)
 {
   req->behavior_flags &= ~flags;
 }
@@ -575,8 +575,8 @@ dpl_make_signature(dpl_ctx_t *ctx,
                    char *subresource,
                    dpl_dict_t *headers,
                    char *buf,
-                   u_int len,
-                   u_int *lenp)
+                   unsigned int len,
+                   unsigned int *lenp)
 {
   char *p;
   //char *tmp_str;
@@ -720,11 +720,11 @@ dpl_add_authorization_to_headers(dpl_req_t *req,
   char *method = dpl_method_str(req->method);
   char resource_ue[DPL_URL_LENGTH(strlen(req->resource)) + 1];
   char sign_str[1024];
-  u_int sign_len;
+  unsigned int sign_len;
   char hmac_str[1024];
-  u_int hmac_len;
+  unsigned int hmac_len;
   char base64_str[1024];
-  u_int base64_len;
+  unsigned int base64_len;
   char auth_str[1024];
 
   //resource
@@ -771,7 +771,7 @@ dpl_add_source_to_headers(dpl_req_t *req,
 {
   int ret, ret2;
   char buf[1024];
-  u_int len = sizeof (buf);
+  unsigned int len = sizeof (buf);
   char *p;
   char src_resource_ue[DPL_URL_LENGTH(strlen(req->src_resource)) + 1];
 
@@ -911,7 +911,7 @@ dpl_req_build(dpl_req_t *req,
           MD5_CTX ctx;
           u_char digest[MD5_DIGEST_LENGTH];
           char b64_digest[DPL_BASE64_LENGTH(MD5_DIGEST_LENGTH) + 1];
-          u_int b64_digest_len;
+          unsigned int b64_digest_len;
 
           if (NULL == req->chunk)
             {
@@ -1160,7 +1160,7 @@ dpl_req_gen_http_request(dpl_req_t *req,
                          dpl_dict_t *query_params,
                          char *buf,
                          int len,
-                         u_int *lenp)
+                         unsigned int *lenp)
 {
   char *p;
   char *method = dpl_method_str(req->method);
@@ -1258,7 +1258,7 @@ dpl_req_gen_url(dpl_req_t *req,
                 dpl_dict_t *headers,
                 char *buf,
                 int len,
-                u_int *lenp)
+                unsigned int *lenp)
 {
   int ret, ret2;
   char *p;
@@ -1266,11 +1266,11 @@ dpl_req_gen_url(dpl_req_t *req,
   char *method = dpl_method_str(req->method);
   char resource_ue[DPL_URL_LENGTH(strlen(req->resource)) + 1];
   char sign_str[1024];
-  u_int sign_len;
+  unsigned int sign_len;
   char hmac_str[1024];
-  u_int hmac_len;
+  unsigned int hmac_len;
   char base64_str[1024];
-  u_int base64_len;
+  unsigned int base64_len;
   char base64_ue_str[1024];
   char str[128];
 
