@@ -27,7 +27,6 @@ AC_PROG_LN_S
 
 PKG_CHECK_MODULES(LIBXML, libxml-2.0)
 PKG_CHECK_MODULES(OPENSSL, openssl)
-AC_SEARCH_LIBS([sqrt], [m], [], [AC_MSG_ERROR([libm library missing])])
 AX_PTHREAD
 
 AC_CONFIG_FILES([
