@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>Droplet: Main Page</title>
+<title>Droplet: Data Fields</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -35,10 +35,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </script>
   <div id="navrow1" class="tabs">
     <ul class="tablist">
-      <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
-      <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
+      <li class="current"><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -58,6 +58,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
+      <li><a href="classes.html"><span>Data&#160;Structure&#160;Index</span></a></li>
+      <li class="current"><a href="functions.html"><span>Data&#160;Fields</span></a></li>
+    </ul>
+  </div>
+  <div id="navrow3" class="tabs2">
+    <ul class="tablist">
+      <li class="current"><a href="functions.html"><span>All</span></a></li>
+      <li><a href="functions_vars.html"><span>Variables</span></a></li>
+    </ul>
+  </div>
 </div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
@@ -73,11 +86,94 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<div class="header">
-  <div class="headertitle">
-<div class="title">Droplet Documentation</div>  </div>
-</div><!--header-->
 <div class="contents">
+<div class="textblock">Here is a list of all documented struct and union fields with links to the struct/union documentation for each field:</div><ul>
+<li>addrlist
+: <a class="el" href="structdpl__ctx.html#aab9d4a028c2f3be0edff3c5d039858f6">dpl_ctx</a>
+</li>
+<li>base_path
+: <a class="el" href="structdpl__ctx.html#a8c7ff4cade758c92d6b32c966cdc8b8e">dpl_ctx</a>
+</li>
+<li>blacklist_expiretime
+: <a class="el" href="structdpl__ctx.html#a0f8ddef40e107b15cecf8c650840c291">dpl_ctx</a>
+</li>
+<li>canary
+: <a class="el" href="structdpl__ctx.html#a96f7143b640c4fa0062e3c50d51e596e">dpl_ctx</a>
+</li>
+<li>conn_buckets
+: <a class="el" href="structdpl__ctx.html#a28dcc8432ad2e1f27425dd844a4b7eb4">dpl_ctx</a>
+</li>
+<li>conn_idle_time
+: <a class="el" href="structdpl__ctx.html#a94da2d0784dcda4a26b3fe229cae820d">dpl_ctx</a>
+</li>
+<li>conn_timeout
+: <a class="el" href="structdpl__ctx.html#ab3800acccc8f6de2dd54fdb700e84937">dpl_ctx</a>
+</li>
+<li>cur_host
+: <a class="el" href="structdpl__ctx.html#a6740e1a41ea38071d03a22880cd7a279">dpl_ctx</a>
+</li>
+<li>encode_slashes
+: <a class="el" href="structdpl__ctx.html#ac7d1fa7ca69cf84197bb32c5d8c74c5a">dpl_ctx</a>
+</li>
+<li>enterprise_number
+: <a class="el" href="structdpl__ctx.html#a1c49477fa60aa1846cba2db305b5c91a">dpl_ctx</a>
+</li>
+<li>eof
+: <a class="el" href="structdpl__conn.html#a818fcf766ad02e767d654f229a8a497d">dpl_conn</a>
+</li>
+<li>event_log
+: <a class="el" href="structdpl__ctx.html#a0264135854266d59b5ab54445c2ae139">dpl_ctx</a>
+</li>
+<li>expires
+: <a class="el" href="structdpl__req__t.html#aa764347cb523a008db86b57a279de22d">dpl_req_t</a>
+</li>
+<li>keep_alive
+: <a class="el" href="structdpl__ctx.html#a6f5507b29cf8c3563d6262dce6c9c978">dpl_ctx</a>
+</li>
+<li>limit
+: <a class="el" href="structdpl__data__pricing.html#a3045493fe72f7641fa17ead93ad3f6f0">dpl_data_pricing</a>
+</li>
+<li>max_redirects
+: <a class="el" href="structdpl__ctx.html#a7b09a389eee1b41939a514919792a2bc">dpl_ctx</a>
+</li>
+<li>n_conn_buckets
+: <a class="el" href="structdpl__ctx.html#a979129328cc479a8e658ae66603b3d55">dpl_ctx</a>
+</li>
+<li>n_conn_fds
+: <a class="el" href="structdpl__ctx.html#ad6be6b73290b658d75ebd65667866d62">dpl_ctx</a>
+</li>
+<li>n_conn_max
+: <a class="el" href="structdpl__ctx.html#aaa4ebe636b3b878f483297b7b5e5f7b2">dpl_ctx</a>
+</li>
+<li>n_conn_max_hits
+: <a class="el" href="structdpl__ctx.html#aa8624a56ef21b2158278783f0e28100d">dpl_ctx</a>
+</li>
+<li>name
+: <a class="el" href="structdpl__backend__s.html#a0bf30f9e831d6e04bb10ca183bee696b">dpl_backend_s</a>
+, <a class="el" href="structdpl__id__scheme__s.html#a318d5d3201a522fab63fa0f5c06d60e4">dpl_id_scheme_s</a>
+</li>
+<li>pricing
+: <a class="el" href="structdpl__ctx.html#a57cc277ed25c9a74ab3d8968be2bd60a">dpl_ctx</a>
+</li>
+<li>pricing_dir
+: <a class="el" href="structdpl__ctx.html#a8616f6645a1a149b523a5cfd3fa13974">dpl_ctx</a>
+</li>
+<li>read_timeout
+: <a class="el" href="structdpl__ctx.html#af57536c8b5e689e37429a5cea731beb7">dpl_ctx</a>
+</li>
+<li>task
+: <a class="el" href="structdpl__async__task__t.html#a20e6f5554e2b574da6cf41d66455d08d">dpl_async_task_t</a>
+</li>
+<li>trace_binary
+: <a class="el" href="structdpl__ctx.html#a2e0983c45478e4b57660ae92273e26ff">dpl_ctx</a>
+</li>
+<li>url_encoding
+: <a class="el" href="structdpl__ctx.html#a877d8cc528315819f1cc393240886c74">dpl_ctx</a>
+</li>
+<li>write_timeout
+: <a class="el" href="structdpl__ctx.html#a89c4cfb75e3843d1929dff7ebf930d9f">dpl_ctx</a>
+</li>
+</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

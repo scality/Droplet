@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
-<title>Droplet: Main Page</title>
+<title>Droplet: vec.c File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -35,11 +35,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </script>
   <div id="navrow1" class="tabs">
     <ul class="tablist">
-      <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="annotated.html"><span>Data&#160;Structures</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
+      <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -58,7 +58,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-</div><!-- top -->
+  <div id="navrow2" class="tabs2">
+    <ul class="tablist">
+      <li><a href="files.html"><span>File&#160;List</span></a></li>
+      <li><a href="globals.html"><span>Globals</span></a></li>
+    </ul>
+  </div>
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -73,15 +78,100 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
+<div id="nav-path" class="navpath">
+  <ul>
+<li class="navelem"><a class="el" href="dir_ed98f68fc1943980e351fba5d6b1e046.html">libdroplet</a></li><li class="navelem"><a class="el" href="dir_f99c1d9060f914429c8d8be5a2ab6ccd.html">src</a></li>  </ul>
+</div>
+</div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
-<div class="title">Droplet Documentation</div>  </div>
+<div class="title">vec.c File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a591f38d22d6c8dcb5de50e5d10b2446c"><td class="memItemLeft" align="right" valign="top">dpl_status_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vec_8c.html#a591f38d22d6c8dcb5de50e5d10b2446c">dpl_vec_add_value</a> (<a class="el" href="structdpl__vec.html">dpl_vec_t</a> *vec, <a class="el" href="structdpl__value.html">dpl_value_t</a> *val)</td></tr>
+<tr class="memdesc:a591f38d22d6c8dcb5de50e5d10b2446c"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a value to vector  <a href="#a591f38d22d6c8dcb5de50e5d10b2446c"></a><br/></td></tr>
+<tr class="memitem:a6a5b3676421e6209b2389025b7aa6a9b"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="vec_8c.html#a6a5b3676421e6209b2389025b7aa6a9b">dpl_vec_get</a> (<a class="el" href="structdpl__vec.html">dpl_vec_t</a> *vec, int i)</td></tr>
+<tr class="memdesc:a6a5b3676421e6209b2389025b7aa6a9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">return the void ptr bound to ith elt  <a href="#a6a5b3676421e6209b2389025b7aa6a9b"></a><br/></td></tr>
+</table>
+<a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"></div><h2>Function Documentation</h2>
+<a class="anchor" id="a591f38d22d6c8dcb5de50e5d10b2446c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">dpl_status_t dpl_vec_add_value </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdpl__vec.html">dpl_vec_t</a> *&#160;</td>
+          <td class="paramname"><em>vec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structdpl__value.html">dpl_value_t</a> *&#160;</td>
+          <td class="paramname"><em>val</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vec</td><td></td></tr>
+    <tr><td class="paramname">val</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a6a5b3676421e6209b2389025b7aa6a9b"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void* dpl_vec_get </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structdpl__vec.html">dpl_vec_t</a> *&#160;</td>
+          <td class="paramname"><em>vec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vec</td><td></td></tr>
+    <tr><td class="paramname">i</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Oct 17 2013 12:28:25 for Droplet by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Oct 17 2013 12:28:24 for Droplet by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.1.2
 </small></address>
