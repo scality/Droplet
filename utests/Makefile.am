@@ -1,11 +1,18 @@
 check_PROGRAMS = alltests
 TESTS = alltests
 
+TESTENV_ARGS= --top-srcdir $(top_srcdir)
+if COVERAGE
+TESTENV_ARGS+= --coverage
+endif
+TESTS_ENVIRONMENT= sh $(srcdir)/testenv.sh $(TESTENV_ARGS) --
+
 alltests_CPPFLAGS = -I$(top_srcdir)/libdroplet/include $(CHECK_CFLAGS)
 alltests_CFLAGS = -std=gnu99
 alltests_LDADD = $(top_builddir)/libdroplet/libdroplet.la $(JSON_LIBS) -lcrypto $(CHECK_LIBS) -lrt
 alltests_SOURCES = \
 	addrlist_utest.c \
+	droplet_utest.c \
 	getdate_utest.c \
 	taskpool_utest.c \
 	ntinydb_utest.c \
@@ -17,3 +24,8 @@ alltests_SOURCES = \
 	vec_utest.c \
 	utest_main.c
 
+if COVERAGE
+clean: clean-am
+	nodefiles=`find $(SUBDIRS) -type f -name \*.gcno -print` ; test -z "$$nodefiles" || $(RM) $$nodefiles
+	datafiles=`find $(SUBDIRS) -type f -name \*.gcno -print` ; test -z "$$datafiles" || $(RM) $$datafiles
+endif
