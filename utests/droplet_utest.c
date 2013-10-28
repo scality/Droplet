@@ -1,8 +1,12 @@
 /* unit test the code in droplet.c */
+#include <sys/types.h>
+#include <limits.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <check.h>
 #include <droplet.h>
-#include <droplet/dbuf.h>
 
 #include "utest_main.h"
 
