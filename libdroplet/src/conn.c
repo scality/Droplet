@@ -166,7 +166,7 @@ dpl_conn_remove_nolock(dpl_ctx_t *ctx,
 
 }
 
-static int
+static void
 safe_close(int fd)
 {
   int ret;
@@ -180,10 +180,8 @@ safe_close(int fd)
       if (EINTR == errno)
         goto retry;
 
-      return -1;
+      return;
     }
-
-  return 0;
 }
 
 static void
@@ -193,7 +191,7 @@ dpl_conn_free(dpl_conn_t *conn)
     SSL_free(conn->ssl);
 
   if (-1 != conn->fd)
-    (void) safe_close(conn->fd);
+    safe_close(conn->fd);
 
   if (NULL != conn->read_buf)
     free(conn->read_buf);
@@ -232,8 +230,7 @@ do_connect(dpl_ctx_t *ctx,
   fd = socket(AF_INET, SOCK_STREAM, 0);
   if (-1 == fd)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "socket failed");
-      fd = -1;
+      DPL_LOG(ctx, DPL_ERROR, "Failed to create socket: %s", strerror(errno));
       goto end;
     }
 
@@ -245,8 +242,8 @@ do_connect(dpl_ctx_t *ctx,
   ret = ioctl(fd, FIONBIO, &on);
   if (-1 == ret)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "ioctl(FIONBIO) failed: %s", strerror(errno));
-      (void) safe_close(fd);
+      DPL_LOG(ctx, DPL_ERROR, "ioctl(FIONBIO) failed: %s", strerror(errno));
+      safe_close(fd);
       fd = -1;
       goto end;
     }
@@ -258,9 +255,10 @@ do_connect(dpl_ctx_t *ctx,
   if (-1 == ret)
     {
       if (EINPROGRESS != errno)
-        {
-          DPL_TRACE(ctx, DPL_TRACE_ERR, "connect failed");
-          (void) safe_close(fd);
+	{
+	  const char *m = strerror(errno);
+	  DPL_LOG(ctx, DPL_ERROR, "Connect to server %s:%d failed: %s", inet_ntoa(addr), port, m);
+	  safe_close(fd);
           fd = -1;
           goto end;
         }
@@ -276,19 +274,24 @@ do_connect(dpl_ctx_t *ctx,
     {
       if (errno == EINTR)
         goto retry;
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "poll failed: %s", strerror(errno));
+      DPL_LOG(ctx, DPL_ERROR, "poll failed: %s", strerror(errno));
+      safe_close(fd);
       fd = -1;
       goto end;
     }
 
   if (0 == ret)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "timed out connecting to %s:%d", inet_ntoa(addr), port);
-      return -1;
+      DPL_LOG(ctx, DPL_ERROR, "Timed out connecting to server %s:%d after %d seconds",
+	      inet_ntoa(addr), port, ctx->conn_timeout);
+      safe_close(fd);
+      fd = -1;
+      goto end;
     }
   else if (!(fds.revents & POLLOUT))
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "poll returned strange results");
+      DPL_LOG(ctx, DPL_ERROR, "poll returned strange results");
+      safe_close(fd);
       fd = -1;
       goto end;
     }
@@ -297,8 +300,8 @@ do_connect(dpl_ctx_t *ctx,
   ret = ioctl(fd, FIONBIO, &on);
   if (-1 == ret)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "ioctl(FIONBIO) failed: %s", strerror(errno));
-      (void) safe_close(fd);
+      DPL_LOG(ctx, DPL_ERROR, "ioctl(FIONBIO) failed: %s", strerror(errno));
+      safe_close(fd);
       fd = -1;
       goto end;
     }
@@ -310,17 +313,17 @@ do_connect(dpl_ctx_t *ctx,
   ret = getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &errorlen);
   if (-1 == ret)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "getsockopt(SO_ERROR) failed: %s", strerror(errno));
-      (void) safe_close(fd);
+      DPL_LOG(ctx, DPL_ERROR, "getsockopt(SO_ERROR) failed: %s", strerror(errno));
+      safe_close(fd);
       fd = -1;
       goto end;
     }
 
   if (error != 0)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "connect to %s:%d failed: %s",
-		inet_ntoa(addr), port, strerror(error));
-      (void) safe_close(fd);
+      const char *m = strerror(error);
+      DPL_LOG(ctx, DPL_ERROR, "Connect to server %s:%d failed: %s", inet_ntoa(addr), port, m);
+      safe_close(fd);
       fd = -1;
       goto end;
     }
@@ -482,22 +485,18 @@ dpl_conn_open_host(dpl_ctx_t *ctx,
   char          *nstr;
 
   ret2 = dpl_gethostbyname_r(host, &hret, hbuf, sizeof (hbuf), &hresult, &herr);
-  if (0 != ret2)
+  if (0 != ret2 || !hresult)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "gethostbyname failed: %s: %s",
+      DPL_LOG(ctx, DPL_ERROR, "Failed to lookup hostname \"%s\": %s",
 		host, hstrerror(herr));
-      goto bad;
-    }
-
-  if (!hresult)
-    {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "Invalid hostname");
       goto bad;
     }
 
   if (AF_INET != hresult->h_addrtype)
     {
-      DPL_TRACE(ctx, DPL_TRACE_ERR, "bad addr family");
+      DPL_LOG(ctx, DPL_ERROR,
+	      "Host \"%s\" has bad address family %d, expecting %d (AF_INET)",
+	      host, (int)hresult->h_addrtype, AF_INET);
       goto bad;
     }
 
