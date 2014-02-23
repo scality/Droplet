@@ -520,6 +520,7 @@ typedef struct dpl_ctx
   int ssl_comp;               /*!< SSL compression support (default to false) */
   /* log */
   unsigned int trace_level;
+  unsigned int default_behavior_flags;
   int trace_buffers;
   int trace_binary;          /*!< default is trace ascii */
   char *pricing;             /*!< might be NULL */
