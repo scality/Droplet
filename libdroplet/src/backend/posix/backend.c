@@ -60,8 +60,6 @@ dpl_posix_map_errno()
         return DPL_ENOENT;
     case EINVAL:
         return DPL_EINVAL;
-    case ETIMEOUT:
-        return DPL_ETIMEOUT;
     case ENOMEM:
         return DPL_ENOMEM;
     case EIO:
