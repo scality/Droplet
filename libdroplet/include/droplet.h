@@ -402,7 +402,7 @@ typedef struct
   dpl_condition_one_t conds[DPL_COND_MAX];
 } dpl_condition_t;
 
-typedef enum
+enum
   {
     DPL_OPTION_LAZY                = (1u<<0), /*!< perform a lazy operation */
     DPL_OPTION_HTTP_COMPAT         = (1u<<1), /*!< use HTTP compat mode */
@@ -412,7 +412,8 @@ typedef enum
     DPL_OPTION_EXPECT_VERSION      = (1u<<5), /*!< expect version */
     DPL_OPTION_FORCE_VERSION       = (1u<<6), /*!< force version */
     DPL_OPTION_NOALLOC             = (1u<<7), /*!< caller provides buffer for GETs */
-  } dpl_option_mask_t;
+  };
+typedef unsigned int dpl_option_mask_t;
 
 typedef struct
 {
@@ -519,6 +520,7 @@ typedef struct dpl_ctx
   int ssl_comp;               /*!< SSL compression support (default to false) */
   /* log */
   unsigned int trace_level;
+  unsigned int default_behavior_flags;
   int trace_buffers;
   int trace_binary;          /*!< default is trace ascii */
   char *pricing;             /*!< might be NULL */

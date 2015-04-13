@@ -34,6 +34,10 @@
 #ifndef __DROPLET_VFS_H__
 #define __DROPLET_VFS_H__ 1
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * vdir
  */
@@ -67,7 +71,7 @@ typedef struct
  * vfile
  */
 
-typedef enum
+enum
   {
     DPL_VFILE_FLAG_CREAT =   (1u<<0),     /*!< create file if it doesnt exist */
     DPL_VFILE_FLAG_EXCL =    (1u<<1),     /*!< exclusive creation */
@@ -75,7 +79,8 @@ typedef enum
     DPL_VFILE_FLAG_WRONLY =  (1u<<3),     /*!< open in write-only mode */
     DPL_VFILE_FLAG_RDWR =    (1u<<4),     /*!< open in read-write mode */
     DPL_VFILE_FLAG_STREAM =  (1u<<5),     /*!< open in stream mode (required for read/append) */
-  } dpl_vfile_flag_t;
+  };
+typedef unsigned int dpl_vfile_flag_t;
 
 typedef struct
 {
@@ -129,4 +134,9 @@ dpl_status_t dpl_link(dpl_ctx_t *ctx, const char *src_locator, const char *dst_l
 dpl_status_t dpl_mkdent(dpl_ctx_t *ctx, const char *src_id, const char *dst_locator, dpl_ftype_t object_type);
 dpl_status_t dpl_rmdent(dpl_ctx_t *ctx, const char *src_name, const char *dst_locator);
 dpl_status_t dpl_mvdent(dpl_ctx_t *ctx, const char *src_locator, const char *dst_locator);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
