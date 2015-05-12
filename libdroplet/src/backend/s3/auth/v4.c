@@ -75,7 +75,7 @@ create_canonical_request(const dpl_req_t *req,
                          dpl_dict_t *headers,
                          dpl_vec_t *canonical_headers,
                          dpl_vec_t *canonical_params,
-                         char *p, unsigned int len)
+                         char *p, size_t len)
 {
   // Method
   {
@@ -191,7 +191,7 @@ get_current_utc_date(struct tm *tm, struct tm *i_tm,
 static dpl_status_t
 create_sign_request(const dpl_req_t *req,
                     char *canonical_request, struct tm *tm, char *date_str,
-                    char *p, unsigned int len)
+                    char *p, size_t len)
 {
   DPL_APPEND_STR("AWS4-HMAC-SHA256\n");
 
@@ -274,7 +274,7 @@ get_canonical_headers(dpl_dict_t *headers)
       dpl_status_t    ret;
 
       assert(header->val->type == DPL_VALUE_STRING);
-      
+
       ret = dpl_vec_add(canonical_headers, header);
       if (ret != DPL_SUCCESS) {
         dpl_vec_free(canonical_headers);
@@ -293,7 +293,7 @@ get_canonical_headers(dpl_dict_t *headers)
 static dpl_status_t
 create_authorization(const dpl_req_t *req, struct tm *tm,
                      dpl_vec_t *canonical_headers, char *signature,
-                     char *p, unsigned int len)
+                     char *p, size_t len)
 {
   int   ret;
   char  date_buf[9];
@@ -439,7 +439,7 @@ get_canonical_params(const char *subresource, const dpl_dict_t *query_params,
       dpl_dict_var_free(param);
     }
     dpl_vec_free(params);
-    
+
     return NULL;
   }
 

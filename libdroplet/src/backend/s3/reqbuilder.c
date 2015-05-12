@@ -214,7 +214,7 @@ add_source_to_headers(const dpl_req_t *req,
 {
   int ret, ret2;
   char buf[1024];
-  u_int len = sizeof (buf);
+  size_t len = sizeof (buf);
   char *p;
   char src_resource_ue[DPL_URL_LENGTH(strlen(req->src_resource)) + 1];
 
@@ -569,7 +569,7 @@ dpl_s3_req_build(const dpl_req_t *req,
 dpl_status_t
 dpl_s3_req_gen_url(const dpl_req_t *req,
                    dpl_dict_t *headers,
-                   char *buf, int len,
+                   char *buf, size_t len,
                    unsigned int *lenp)
 {
   int           bucket;
@@ -597,7 +597,7 @@ dpl_s3_req_gen_url(const dpl_req_t *req,
   else
     DPL_APPEND_STR("http");
   DPL_APPEND_STR("://");
-  
+
   DPL_APPEND_STR(req->host);
 
   if (( req->ctx->use_https && strcmp(req->port, "443")) ||
