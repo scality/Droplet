@@ -48,7 +48,7 @@ struct cdmi_req_add_md_arg
   int comma;
 };
 
-dpl_status_t 
+dpl_status_t
 cb_cdmi_req_add_metadata(dpl_dict_var_t *var,
                          void *cb_arg)
 {
@@ -64,11 +64,11 @@ cb_cdmi_req_add_metadata(dpl_dict_var_t *var,
       ret = ret2;
       goto end;
     }
-  
+
   arg->comma = 1;
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   return ret;
@@ -124,7 +124,7 @@ dpl_cdmi_req_add_metadata(dpl_req_t *req,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   if (NULL != arg.field)
@@ -140,7 +140,7 @@ struct metadata_list_arg
   void *cb_arg;
 };
 
-dpl_status_t 
+dpl_status_t
 cb_metadata_list(dpl_dict_var_t *var,
                  void *cb_arg)
 {
@@ -150,7 +150,7 @@ cb_metadata_list(dpl_dict_var_t *var,
   if (arg->metadatum_func)
     {
       dpl_value_t val;
-      
+
       val.type = DPL_VALUE_STRING;
       val.string = var->val->string;
       ret2 = arg->metadatum_func(arg->cb_arg, var->key, &val);
@@ -160,7 +160,7 @@ cb_metadata_list(dpl_dict_var_t *var,
           goto end;
         }
     }
-  
+
   ret2 = dpl_dict_add_value(arg->metadata, var->key, var->val, 0);
   if (DPL_SUCCESS != ret2)
     {
@@ -175,17 +175,17 @@ cb_metadata_list(dpl_dict_var_t *var,
   return ret;
 }
 
-/** 
+/**
  * parse a value into a suitable metadata or sysmd
- * 
- * @param key 
- * @param val 
+ *
+ * @param key
+ * @param val
  * @param metadatum_func
  * @param cb_arg
- * @param metadata 
- * @param sysmdp 
- * 
- * @return 
+ * @param metadata
+ * @param sysmdp
+ *
+ * @return
  */
 dpl_status_t
 dpl_cdmi_get_metadatum_from_value(const char *key,
@@ -199,6 +199,11 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
   dpl_dict_var_t *var;
   dpl_cdmi_object_id_t obj_id;
 
+  if (val == NULL)
+  {
+     ret = DPL_EINVAL;
+     goto end;
+   }
   DPRINTF("key=%s val.type=%d\n", key, val->type);
 
   if (sysmdp)
@@ -210,7 +215,7 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
               ret = DPL_EINVAL;
               goto end;
             }
-          
+
           ret2 = dpl_cdmi_string_to_object_id(dpl_sbuf_get_str(val->string),
                                               &obj_id);
           if (DPL_SUCCESS != ret2)
@@ -218,16 +223,16 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
               ret = ret2;
               goto end;
             }
-          
+
           ret2 = dpl_cdmi_opaque_to_string(&obj_id, sysmdp->id);
           if (DPL_SUCCESS != ret2)
             {
               ret = ret2;
               goto end;
             }
-          
+
           sysmdp->mask |= DPL_SYSMD_MASK_ID;
-          
+
           sysmdp->enterprise_number = obj_id.enterprise_number;
           sysmdp->mask |= DPL_SYSMD_MASK_ENTERPRISE_NUMBER;
         }
@@ -247,14 +252,14 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
                   ret = ret2;
                   goto end;
                 }
-              
+
               ret2 = dpl_cdmi_opaque_to_string(&obj_id, sysmdp->parent_id);
               if (DPL_SUCCESS != ret2)
                 {
                   ret = ret2;
                   goto end;
                 }
-              
+
               sysmdp->mask |= DPL_SYSMD_MASK_PARENT_ID;
             }
         }
@@ -265,7 +270,7 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
               ret = DPL_EINVAL;
               goto end;
             }
-          
+
           sysmdp->mask |= DPL_SYSMD_MASK_FTYPE;
           sysmdp->ftype = dpl_cdmi_content_type_to_ftype(dpl_sbuf_get_str(val->string));
         }
@@ -283,7 +288,7 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
       if (sysmdp)
         {
           //some sysmds are stored in metadata
-          
+
           var = dpl_dict_get(val->subdict, "cdmi_mtime");
           if (NULL != var)
             {
@@ -292,11 +297,11 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
                   ret = DPL_EINVAL;
                   goto end;
                 }
-              
+
               sysmdp->mask |= DPL_SYSMD_MASK_MTIME;
               sysmdp->mtime = dpl_iso8601totime(dpl_sbuf_get_str(var->val->string));
             }
-          
+
           var = dpl_dict_get(val->subdict, "cdmi_atime");
           if (NULL != var)
             {
@@ -305,11 +310,11 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
                   ret = DPL_EINVAL;
                   goto end;
                 }
-              
+
               sysmdp->mask |= DPL_SYSMD_MASK_ATIME;
               sysmdp->atime = dpl_iso8601totime(dpl_sbuf_get_str(var->val->string));
             }
-          
+
           var = dpl_dict_get(val->subdict, "cdmi_size");
           if (NULL != var)
             {
@@ -318,7 +323,7 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
                   ret = DPL_EINVAL;
                   goto end;
                 }
-              
+
               sysmdp->mask |= DPL_SYSMD_MASK_SIZE;
               sysmdp->size = strtoull(dpl_sbuf_get_str(var->val->string), NULL, 0);
             }
@@ -327,7 +332,7 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
       if (metadata)
         {
           struct metadata_list_arg arg;
-          
+
           arg.metadatum_func = metadatum_func;
           arg.metadata = metadata;
           arg.cb_arg = cb_arg;
@@ -341,25 +346,25 @@ dpl_cdmi_get_metadatum_from_value(const char *key,
             }
         }
     }
-  
+
   ret = DPL_SUCCESS;
-  
+
  end:
 
   return ret;
 }
 
-/** 
+/**
  * common routine for x-object-meta-* and x-container-meta-*
- * 
- * @param string 
- * @param value 
- * @param metadatum_func 
- * @param cb_arg 
- * @param metadata 
- * @param sysmdp 
- * 
- * @return 
+ *
+ * @param string
+ * @param value
+ * @param metadatum_func
+ * @param cb_arg
+ * @param metadata
+ * @param sysmdp
+ *
+ * @return
  */
 dpl_status_t
 dpl_cdmi_get_metadatum_from_string(const char *key,
@@ -371,10 +376,10 @@ dpl_cdmi_get_metadatum_from_string(const char *key,
 {
   dpl_status_t ret, ret2;
   dpl_value_t *val = NULL;
-  
+
   //XXX convert
 
-  ret2 = dpl_cdmi_get_metadatum_from_value(key, val, 
+  ret2 = dpl_cdmi_get_metadatum_from_value(key, val,
                                            metadatum_func, cb_arg,
                                            metadata, sysmdp);
   if (DPL_SUCCESS != ret2)
@@ -384,7 +389,7 @@ dpl_cdmi_get_metadatum_from_string(const char *key,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   if (NULL != val)
@@ -393,17 +398,17 @@ dpl_cdmi_get_metadatum_from_string(const char *key,
   return ret;
 }
 
-/** 
+/**
  * parse a HTTP header into a suitable metadata or sysmd
- * 
- * @param header 
- * @param value 
+ *
+ * @param header
+ * @param value
  * @param metadatum_func optional
  * @param cb_arg for metadatum_func
  * @param metadata optional
  * @param sysmdp optional
- * 
- * @return 
+ *
+ * @return
  */
 dpl_status_t
 dpl_cdmi_get_metadatum_from_header(const char *header,
@@ -421,7 +426,7 @@ dpl_cdmi_get_metadatum_from_header(const char *header,
 
       key = (char *) header + strlen(DPL_X_OBJECT_META_PREFIX);
 
-      ret2 = dpl_cdmi_get_metadatum_from_string(key, value, 
+      ret2 = dpl_cdmi_get_metadatum_from_string(key, value,
                                                 metadatum_func, cb_arg,
                                                 metadata, sysmdp);
       if (DPL_SUCCESS != ret2)
@@ -436,7 +441,7 @@ dpl_cdmi_get_metadatum_from_header(const char *header,
 
       key = (char *) header + strlen(DPL_X_CONTAINER_META_PREFIX);
 
-      ret2 = dpl_cdmi_get_metadatum_from_string(key, value, 
+      ret2 = dpl_cdmi_get_metadatum_from_string(key, value,
                                                 metadatum_func, cb_arg,
                                                 metadata, sysmdp);
       if (DPL_SUCCESS != ret2)
@@ -454,17 +459,17 @@ dpl_cdmi_get_metadatum_from_header(const char *header,
               sysmdp->mask |= DPL_SYSMD_MASK_SIZE;
               sysmdp->size = atoi(value);
             }
-          
+
           if (!strcmp(header, "last-modified"))
             {
               sysmdp->mask |= DPL_SYSMD_MASK_MTIME;
               sysmdp->mtime = dpl_get_date(value, NULL);
             }
-          
+
           if (!strcmp(header, "etag"))
             {
               int value_len = strlen(value);
-              
+
               if (value_len < DPL_SYSMD_ETAG_SIZE && value_len >= 2)
                 {
                   sysmdp->mask |= DPL_SYSMD_MASK_ETAG;
@@ -475,7 +480,7 @@ dpl_cdmi_get_metadatum_from_header(const char *header,
             }
         }
     }
-    
+
   ret = DPL_SUCCESS;
 
  end:
@@ -494,7 +499,7 @@ cb_headers_iterate(dpl_dict_var_t *var,
                    void *cb_arg)
 {
   struct metadata_conven *mc = (struct metadata_conven *) cb_arg;
-  
+
   assert(var->val->type == DPL_VALUE_STRING);
   return dpl_cdmi_get_metadatum_from_header(var->key,
                                             dpl_sbuf_get_str(var->val->string),
@@ -504,14 +509,14 @@ cb_headers_iterate(dpl_dict_var_t *var,
                                             mc->sysmdp);
 }
 
-/** 
+/**
  * get metadata from headers
- * 
- * @param headers 
- * @param metadatap 
- * @param sysmdp 
- * 
- * @return 
+ *
+ * @param headers
+ * @param metadatap
+ * @param sysmdp
+ *
+ * @return
  */
 dpl_status_t
 dpl_cdmi_get_metadata_from_headers(const dpl_dict_t *headers,
@@ -538,7 +543,7 @@ dpl_cdmi_get_metadata_from_headers(const dpl_dict_t *headers,
 
   if (sysmdp)
     sysmdp->mask = 0;
-      
+
   ret2 = dpl_dict_iterate(headers, cb_headers_iterate, &mc);
   if (DPL_SUCCESS != ret2)
     {
@@ -553,7 +558,7 @@ dpl_cdmi_get_metadata_from_headers(const dpl_dict_t *headers,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   if (NULL != metadata)
@@ -567,7 +572,7 @@ cb_values_iterate(dpl_dict_var_t *var,
                   void *cb_arg)
 {
   struct metadata_conven *mc = (struct metadata_conven *) cb_arg;
-  
+
   return dpl_cdmi_get_metadatum_from_value(var->key,
                                            var->val,
                                            NULL,
@@ -576,14 +581,14 @@ cb_values_iterate(dpl_dict_var_t *var,
                                            mc->sysmdp);
 }
 
-/** 
+/**
  * get metadata from values
- * 
- * @param values 
- * @param metadatap 
- * @param sysmdp 
- * 
- * @return 
+ *
+ * @param values
+ * @param metadatap
+ * @param sysmdp
+ *
+ * @return
  */
 dpl_status_t
 dpl_cdmi_get_metadata_from_values(const dpl_dict_t *values,
@@ -610,7 +615,7 @@ dpl_cdmi_get_metadata_from_values(const dpl_dict_t *values,
 
   if (sysmdp)
     sysmdp->mask = 0;
-      
+
   ret2 = dpl_dict_iterate(values, cb_values_iterate, &mc);
   if (DPL_SUCCESS != ret2)
     {
@@ -625,7 +630,7 @@ dpl_cdmi_get_metadata_from_values(const dpl_dict_t *values,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   if (NULL != metadata)
@@ -694,7 +699,7 @@ dpl_cdmi_parse_list_bucket(dpl_ctx_t *ctx,
       else
         {
           json_object *child = json_object_array_get_idx(children, i);
-      
+
           if (json_type_string != json_object_get_type(child))
             {
               ret = DPL_FAILURE;
@@ -797,7 +802,7 @@ convert_obj_to_value(dpl_ctx_t *ctx,
 {
   int ret, ret2;
   dpl_value_t *val = NULL;
-  char *key; 
+  char *key;
   struct lh_entry *entry;
   json_object *child;
   dpl_dict_t *subdict = NULL;
@@ -840,11 +845,11 @@ convert_obj_to_value(dpl_ctx_t *ctx,
                 ret = ret2;
                 goto end;
               }
-            
+
             ret2 = dpl_vec_add_value(vector, subval);
 
             dpl_value_free(subval);
-            
+
             if (DPL_SUCCESS != ret2)
               {
                 ret = ret2;
@@ -865,7 +870,7 @@ convert_obj_to_value(dpl_ctx_t *ctx,
             ret = DPL_ENOMEM;
             goto end;
           }
-        
+
         for (entry = json_object_get_object(obj)->head; (entry ? (key = (char*)entry->k, child = (struct json_object*)entry->v, entry) : 0); entry = entry->next)
           {
             dpl_value_t *subval;
@@ -878,7 +883,7 @@ convert_obj_to_value(dpl_ctx_t *ctx,
                 ret = ret2;
                 goto end;
               }
-            
+
             ret2 = dpl_dict_add_value(subdict, key, subval, 0);
 
             dpl_value_free(subval);
@@ -937,7 +942,7 @@ convert_obj_to_value(dpl_ctx_t *ctx,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   if (NULL != vector)
@@ -954,15 +959,15 @@ convert_obj_to_value(dpl_ctx_t *ctx,
   return ret;
 }
 
-/** 
+/**
  * parse a JSON buffer into a value
- * 
- * @param ctx 
- * @param buf 
- * @param len 
- * @param valp 
- * 
- * @return 
+ *
+ * @param ctx
+ * @param buf
+ * @param len
+ * @param valp
+ *
+ * @return
  */
 dpl_status_t
 dpl_cdmi_parse_json_buffer(dpl_ctx_t *ctx,
@@ -997,7 +1002,7 @@ dpl_cdmi_parse_json_buffer(dpl_ctx_t *ctx,
       ret = ret2;
       goto end;
     }
-  
+
   if (NULL != valp)
     {
       *valp = val;
