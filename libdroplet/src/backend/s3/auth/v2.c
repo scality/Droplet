@@ -59,7 +59,7 @@ dpl_s3_make_signature_v2(dpl_ctx_t *ctx,
                          char *date,
                          dpl_dict_t *headers,
                          char *buf,
-                         unsigned int len,
+                         size_t len,
                          unsigned int *lenp)
 {
   char *p;

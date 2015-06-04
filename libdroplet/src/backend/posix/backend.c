@@ -87,7 +87,7 @@ dpl_posix_get_capabilities(dpl_ctx_t *ctx,
 {
   if (NULL != maskp)
     *maskp = DPL_CAP_FNAMES;
-  
+
   return DPL_SUCCESS;
 }
 
@@ -96,7 +96,7 @@ dpl_posix_head_raw(dpl_ctx_t *ctx,
                    const char *bucket,
                    const char *resource,
                    const char *subresource,
-                   const dpl_option_t *option, 
+                   const dpl_option_t *option,
                    dpl_ftype_t object_type,
                    const dpl_condition_t *condition,
                    dpl_dict_t **metadatap,
@@ -146,7 +146,7 @@ dpl_posix_head_raw(dpl_ctx_t *ctx,
       ret = ret2;
       goto end;
     }
-  
+
   snprintf(buf, sizeof (buf), "%u", st.st_mode);
   ret2 = dpl_dict_add(metadata, "mode", buf, 0);
   if (DPL_SUCCESS != ret2)
@@ -321,7 +321,7 @@ dpl_posix_head(dpl_ctx_t *ctx,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   if (NULL != all_mds)
@@ -396,7 +396,7 @@ dpl_posix_list_bucket(dpl_ctx_t *ctx,
           perror("readdir");
           goto end;
         }
-      
+
       if (!entryp)
         break ;
 
@@ -602,7 +602,7 @@ dpl_posix_put(dpl_ctx_t *ctx,
               const char *bucket,
               const char *resource,
               const char *subresource,
-              const dpl_option_t *option, 
+              const dpl_option_t *option,
               dpl_ftype_t object_type,
               const dpl_condition_t *condition,
               const dpl_range_t *range,
@@ -610,7 +610,7 @@ dpl_posix_put(dpl_ctx_t *ctx,
               const dpl_sysmd_t *sysmd,
               const char *data_buf,
               unsigned int data_len,
-              const dpl_dict_t *query_params, 
+              const dpl_dict_t *query_params,
               dpl_sysmd_t *returned_sysmdp,
               char **locationp)
 {
@@ -710,7 +710,7 @@ dpl_posix_put(dpl_ctx_t *ctx,
           ret = dpl_posix_map_errno();
           goto end;
         }
-      
+
       if (data_len != cc)
         {
           ret = DPL_FAILURE;
@@ -827,7 +827,7 @@ posix_get(const char *path,
   if (range)
     {
       int range_len;
-      
+
       offset = range->start;
       range_len = range->start - range->end;
       if (data_len < range_len)
@@ -835,7 +835,7 @@ posix_get(const char *path,
           ret = DPL_EINVAL;
           goto end;
         }
-      
+
       length = data_len;
     }
   else
@@ -960,9 +960,9 @@ dpl_posix_delete(dpl_ctx_t *ctx,
                  const char *bucket,
                  const char *resource,
                  const char *subresource,
-                 const dpl_option_t *option, 
+                 const dpl_option_t *option,
                  dpl_ftype_t object_type,
-                 const dpl_condition_t *condition, 
+                 const dpl_condition_t *condition,
                  char **locationp)
 {
   dpl_status_t ret;
@@ -1022,7 +1022,7 @@ dpl_posix_delete(dpl_ctx_t *ctx,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   DPL_TRACE(ctx, DPL_TRACE_BACKEND, "ret=%d", ret);
@@ -1038,7 +1038,7 @@ dpl_posix_copy(dpl_ctx_t *ctx,
                const char *dst_bucket,
                const char *dst_resource,
                const char *dst_subresource,
-               const dpl_option_t *option, 
+               const dpl_option_t *option,
                dpl_ftype_t object_type,
                dpl_copy_directive_t copy_directive,
                const dpl_dict_t *metadata,
@@ -1069,7 +1069,8 @@ dpl_posix_copy(dpl_ctx_t *ctx,
       ret = DPL_ENOTSUPP;
       goto end;
     case DPL_COPY_DIRECTIVE_METADATA_REPLACE:
-      if (strcmp(src_resource, dst_resource))
+      if (src_resource == NULL || dst_resource == NULL ||
+          strcmp(src_resource, dst_resource))
         {
           ret = DPL_EINVAL;
           goto end;
@@ -1118,7 +1119,7 @@ dpl_posix_copy(dpl_ctx_t *ctx,
     }
 
   ret = DPL_SUCCESS;
-  
+
  end:
 
   DPL_TRACE(ctx, DPL_TRACE_BACKEND, "ret=%d", ret);
@@ -1439,7 +1440,7 @@ dpl_posix_stream_flush(dpl_ctx_t *ctx,
 }
 
 dpl_backend_t
-dpl_backend_posix = 
+dpl_backend_posix =
   {
     "posix",
     .get_capabilities   = dpl_posix_get_capabilities,
