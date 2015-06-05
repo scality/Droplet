@@ -70,36 +70,41 @@ dpl_add_range_to_headers_internal(const dpl_range_t *range,
 {
   int ret;
   char buf[1024];
-  int len = sizeof (buf);
+  size_t len = sizeof (buf);
   char *p;
   int first = 1;
   char str[128];
 
   p = buf;
 
-  DPL_APPEND_STR("bytes=");
+  if (dpl_append_str("bytes=", &p, &len) != DPL_SUCCESS)
+    return DPL_FAILURE;
 
   if (1 == first)
     first = 0;
   else
-    DPL_APPEND_STR(",");
+    if (dpl_append_str(",", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
   
   if (DPL_UNDEF == range->start && DPL_UNDEF == range->end)
     return DPL_EINVAL;
   else if (DPL_UNDEF == range->start)
     {
       snprintf(str, sizeof (str), "-%lu", range->end);
-      DPL_APPEND_STR(str);
+      if (dpl_append_str(str, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
     }
   else if (DPL_UNDEF == range->end)
     {
       snprintf(str, sizeof (str), "%lu-", range->start);
-      DPL_APPEND_STR(str);
+      if (dpl_append_str(str, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
     }
   else
     {
       snprintf(str, sizeof (str), "%lu-%lu", range->start, range->end);
-      DPL_APPEND_STR(str);
+      if (dpl_append_str(str, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
     }
 
   DPL_APPEND_CHAR(0);
@@ -252,7 +257,7 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
                          const dpl_dict_t *headers,
                          const dpl_dict_t *query_params,
                          char *buf,
-                         int len,
+                         size_t len,
                          unsigned int *lenp)
 {
   int ret;
@@ -296,19 +301,33 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
   }
       
   //method
-  DPL_APPEND_STR(method);
-
-  DPL_APPEND_STR(" ");
+  if (dpl_append_str(method, &p, &len) != DPL_SUCCESS || dpl_append_str(" ", &p, &len) != DPL_SUCCESS)
+    {
+       ret = DPL_FAILURE;
+       goto end;
+    }
 
   if (resource_ue != NULL)
-    DPL_APPEND_STR(resource_ue);
+    if (dpl_append_str(resource_ue, &p, &len) != DPL_SUCCESS)
+      {
+         ret = DPL_FAILURE;
+         goto end;
+      }
 
   //subresource and query params
   if (NULL != req->subresource || NULL != query_params)
-    DPL_APPEND_STR("?");
+    if (dpl_append_str("?", &p, &len) != DPL_SUCCESS)
+      {
+         ret = DPL_FAILURE;
+         goto end;
+      }
 
   if (NULL != req->subresource)
-    DPL_APPEND_STR(req->subresource);
+    if (dpl_append_str(req->subresource, &p, &len) != DPL_SUCCESS)
+      {
+         ret = DPL_FAILURE;
+         goto end;
+      }
 
   if (NULL != query_params)
     {
@@ -324,21 +343,36 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
           for (var = query_params->buckets[bucket];var;var = var->prev)
             {
               if (amp)
-                DPL_APPEND_STR("&");
-              DPL_APPEND_STR(var->key);
-              DPL_APPEND_STR("=");
+                if (dpl_append_str("&", &p, &len) != DPL_SUCCESS)
+                  {
+                     ret = DPL_FAILURE;
+                     goto end;
+                  }
+              if (dpl_append_str(var->key, &p, &len) != DPL_SUCCESS ||
+                dpl_append_str("=", &p, &len) != DPL_SUCCESS)
+                {
+                   ret = DPL_FAILURE;
+                   goto end;
+                }
               assert(var->val->type == DPL_VALUE_STRING);
-              DPL_APPEND_STR(dpl_sbuf_get_str(var->val->string));
+              if (dpl_append_str(dpl_sbuf_get_str(var->val->string), &p, &len) != DPL_SUCCESS)
+                {
+                   ret = DPL_FAILURE;
+                   goto end;
+                }
               amp = 1;
             }
         }
     }
 
-  DPL_APPEND_STR(" ");
-
   //version
-  DPL_APPEND_STR("HTTP/1.1");
-  DPL_APPEND_STR("\r\n");
+  if (dpl_append_str(" ", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("HTTP/1.1", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("\r\n", &p, &len) != DPL_SUCCESS)
+    {
+      ret = DPL_FAILURE;
+      goto end;
+    }
 
   //headers
   if (NULL != headers)
@@ -354,10 +388,14 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
               DPL_TRACE(req->ctx, DPL_TRACE_REQ, "header='%s' value='%s'",
 			var->key, dpl_sbuf_get_str(var->val->string));
 
-              DPL_APPEND_STR(var->key);
-              DPL_APPEND_STR(": ");
-              DPL_APPEND_STR(dpl_sbuf_get_str(var->val->string));
-              DPL_APPEND_STR("\r\n");
+              if (dpl_append_str(var->key, &p, &len) != DPL_SUCCESS ||
+                dpl_append_str(": ", &p, &len) != DPL_SUCCESS ||
+                dpl_append_str(dpl_sbuf_get_str(var->val->string), &p, &len) != DPL_SUCCESS ||
+                dpl_append_str("\r\n", &p, &len) != DPL_SUCCESS)
+                {
+                  ret = DPL_FAILURE;
+                  goto end;
+                }
             }
         }
     }
@@ -373,6 +411,5 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
   
   if (NULL != resource_ue)
     free(resource_ue);
-
   return ret;
 }

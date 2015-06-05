@@ -43,7 +43,7 @@ dpl_s3_genurl(dpl_ctx_t *ctx,
               const dpl_option_t *option,
               time_t expires,
               char *buf,
-              unsigned int len,
+              size_t len,
               unsigned int *lenp,
               char **locationp)
 {

@@ -208,15 +208,6 @@ int dpl_base64_init(void);
     *p = (Char);p++;len--;                                      \
   } while (0)
 
-#define DPL_APPEND_BUF(Buf, Len)                                \
-  do {                                                          \
-    if (len < (Len))                                            \
-      return DPL_FAILURE;                                       \
-    memcpy(p, (Buf), (Len)); p += (Len); len -= (Len);          \
-  } while (0)
-
-#define DPL_APPEND_STR(Str) DPL_APPEND_BUF((Str), strlen(Str))
-
 /**/
 
 #define DPL_TRACE(ctx, level, format, ...) do {if (ctx->trace_level & level) dpl_trace(ctx, level, __FILE__, __func__, __LINE__, format, ##__VA_ARGS__  );} while (0)
@@ -263,6 +254,7 @@ dpl_status_t dpl_log(dpl_ctx_t *ctx, dpl_log_level_t level, const char *file,
 void dpl_ssl_perror(dpl_ctx_t *ctx, const char *file, const char *func,
 		    int line, const char *str);
 dpl_status_t dpl_get_xattrs(char *path, dpl_dict_t *dict, char *prefix, int do_64encode);
+dpl_status_t dpl_append_str(const char *str_to_add, char **buff, size_t *size_buff);
 
 #define XATTRS_ENCODE_BASE64 1
 #define XATTRS_NO_ENCODING 0

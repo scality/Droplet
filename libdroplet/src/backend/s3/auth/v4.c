@@ -75,14 +75,15 @@ create_canonical_request(const dpl_req_t *req,
                          dpl_dict_t *headers,
                          dpl_vec_t *canonical_headers,
                          dpl_vec_t *canonical_params,
-                         char *p, unsigned int len)
+                         char *p, size_t len)
 {
   // Method
   {
     const char    *method = dpl_method_str(req->method);
 
-    DPL_APPEND_STR(method);
-    DPL_APPEND_STR("\n");
+    if (dpl_append_str(method,  &p, &len) != DPL_SUCCESS
+     || dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+       return DPL_FAILURE;
   }
 
   // Resource
@@ -90,12 +91,15 @@ create_canonical_request(const dpl_req_t *req,
     char        resource_ue[DPL_URL_LENGTH(strlen(req->resource)) + 1];
 
     if (req->resource[0] != '/')
-      DPL_APPEND_STR("/");
+      if (dpl_append_str("/", &p, &len) != DPL_SUCCESS)
+       return DPL_FAILURE;
 
     dpl_url_encode_no_slashes(req->resource, resource_ue);
-    DPL_APPEND_STR(resource_ue);
+    if (dpl_append_str(resource_ue, &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
   }
-  DPL_APPEND_STR("\n");
+  if (dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+    return DPL_FAILURE;
 
   // Query params
   {
@@ -108,13 +112,16 @@ create_canonical_request(const dpl_req_t *req,
         continue;
 
       if (item > 0)
-        DPL_APPEND_STR("&");
+        if (dpl_append_str("&", &p, &len) != DPL_SUCCESS)
+          return DPL_FAILURE;
 
-      DPL_APPEND_STR(param->key);
-      DPL_APPEND_STR("=");
-      DPL_APPEND_STR(dpl_sbuf_get_str(param->val->string));
+      if (dpl_append_str(param->key, &p, &len) != DPL_SUCCESS
+        || dpl_append_str("=", &p, &len) != DPL_SUCCESS
+        || dpl_append_str(dpl_sbuf_get_str(param->val->string), &p, &len) != DPL_SUCCESS)
+         return DPL_FAILURE;
     }
-    DPL_APPEND_STR("\n");
+    if (dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
   }
 
   // Headers
@@ -131,11 +138,13 @@ create_canonical_request(const dpl_req_t *req,
 
       for (c = header->key; *c != '\0'; c++)
         DPL_APPEND_CHAR(tolower(*c));
-      DPL_APPEND_STR(":");
-      DPL_APPEND_STR(dpl_sbuf_get_str(header->val->string));
-      DPL_APPEND_STR("\n");
+      if (dpl_append_str(":", &p, &len) != DPL_SUCCESS
+        || dpl_append_str(dpl_sbuf_get_str(header->val->string), &p, &len) != DPL_SUCCESS
+        || dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+         return DPL_FAILURE;
     }
-    DPL_APPEND_STR("\n");
+    if (dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
 
     for (item = 0; item < canonical_headers->n_items; item++) {
       header = (dpl_dict_var_t *) dpl_vec_get(canonical_headers, item);
@@ -144,27 +153,31 @@ create_canonical_request(const dpl_req_t *req,
         continue;
 
       if (item > 0)
-        DPL_APPEND_STR(";");
+        if (dpl_append_str(";", &p, &len) != DPL_SUCCESS)
+          return DPL_FAILURE;
 
       for (c = header->key; *c != '\0'; c++)
         DPL_APPEND_CHAR(tolower(*c));
     }
-    DPL_APPEND_STR("\n");
+    if (dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
   } else {
-    DPL_APPEND_STR("host:");
-    DPL_APPEND_STR(req->host);
-    DPL_APPEND_STR("\n\n");
-
-    DPL_APPEND_STR("host\n");
+    if (dpl_append_str("host:", &p, &len) != DPL_SUCCESS
+      || dpl_append_str(req->host, &p, &len) != DPL_SUCCESS
+      || dpl_append_str("\n\n", &p, &len) != DPL_SUCCESS
+      || dpl_append_str("host\n", &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
 
   // Hashed payload
   if (headers != NULL) {
     char        *value = dpl_dict_get_value(headers, "x-amz-content-sha256");
     if (value != NULL)
-      DPL_APPEND_STR(value);
+      if (dpl_append_str(value, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   } else
-    DPL_APPEND_STR("UNSIGNED-PAYLOAD");
+    if (dpl_append_str("UNSIGNED-PAYLOAD", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
 
   return DPL_SUCCESS;
 }
@@ -191,12 +204,12 @@ get_current_utc_date(struct tm *tm, struct tm *i_tm,
 static dpl_status_t
 create_sign_request(const dpl_req_t *req,
                     char *canonical_request, struct tm *tm, char *date_str,
-                    char *p, unsigned int len)
+                    char *p, size_t len)
 {
-  DPL_APPEND_STR("AWS4-HMAC-SHA256\n");
-
-  DPL_APPEND_STR(date_str);
-  DPL_APPEND_STR("\n");
+  if (dpl_append_str("AWS4-HMAC-SHA256\n", &p, &len) != DPL_SUCCESS
+   || dpl_append_str(date_str, &p, &len) != DPL_SUCCESS
+   || dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+     return DPL_FAILURE;
 
   {
     int         ret;
@@ -206,10 +219,11 @@ create_sign_request(const dpl_req_t *req,
     if (ret == 0)
       return DPL_FAILURE;
 
-    DPL_APPEND_STR(date_buf);
-    DPL_APPEND_STR("/");
-    DPL_APPEND_STR(req->ctx->aws_region);
-    DPL_APPEND_STR("/s3/aws4_request\n");
+    if (dpl_append_str(date_buf, &p, &len) != DPL_SUCCESS
+      || dpl_append_str("/", &p, &len) != DPL_SUCCESS
+      || dpl_append_str(req->ctx->aws_region, &p, &len) != DPL_SUCCESS
+      || dpl_append_str("/s3/aws4_request\n", &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
 
   {
@@ -221,7 +235,8 @@ create_sign_request(const dpl_req_t *req,
     for (i = 0; i < sizeof digest; i++)
       sprintf(digest_hex + 2 * i, "%02x", (u_char) digest[i]);
 
-    DPL_APPEND_STR(digest_hex);
+    if (dpl_append_str(digest_hex, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
 
   return DPL_SUCCESS;
@@ -293,7 +308,7 @@ get_canonical_headers(dpl_dict_t *headers)
 static dpl_status_t
 create_authorization(const dpl_req_t *req, struct tm *tm,
                      dpl_vec_t *canonical_headers, char *signature,
-                     char *p, unsigned int len)
+                     char *p, size_t len)
 {
   int   ret;
   char  date_buf[9];
@@ -302,21 +317,19 @@ create_authorization(const dpl_req_t *req, struct tm *tm,
   if (ret == 0)
     return DPL_FAILURE;
 
-  DPL_APPEND_STR("AWS4-HMAC-SHA256");
+  if (dpl_append_str("AWS4-HMAC-SHA256", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str(" ", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("Credential=", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str(req->ctx->access_key, &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("/", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str(date_buf, &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("/", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str(req->ctx->aws_region, &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("/s3/aws4_request", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str(",", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("SignedHeaders=", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
 
-  DPL_APPEND_STR(" ");
-
-  DPL_APPEND_STR("Credential=");
-  DPL_APPEND_STR(req->ctx->access_key);
-  DPL_APPEND_STR("/");
-  DPL_APPEND_STR(date_buf);
-  DPL_APPEND_STR("/");
-  DPL_APPEND_STR(req->ctx->aws_region);
-  DPL_APPEND_STR("/s3/aws4_request");
-
-  DPL_APPEND_STR(",");
-
-  DPL_APPEND_STR("SignedHeaders=");
   {
     int                 item;
     char                *c;
@@ -329,17 +342,17 @@ create_authorization(const dpl_req_t *req, struct tm *tm,
         continue;
 
       if (item > 0)
-        DPL_APPEND_STR(";");
+        if (dpl_append_str(";", &p, &len) != DPL_SUCCESS)
+          return DPL_FAILURE;
 
       for (c = header->key; *c != '\0'; c++)
         DPL_APPEND_CHAR(tolower(*c));
     }
   }
-
-  DPL_APPEND_STR(",");
-
-  DPL_APPEND_STR("Signature=");
-  DPL_APPEND_STR(signature);
+  if (dpl_append_str(",", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str("Signature=", &p, &len) != DPL_SUCCESS ||
+    dpl_append_str(signature, &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
 
   return DPL_SUCCESS;
 }

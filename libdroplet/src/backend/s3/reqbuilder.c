@@ -214,7 +214,7 @@ add_source_to_headers(const dpl_req_t *req,
 {
   int ret, ret2;
   char buf[1024];
-  u_int len = sizeof (buf);
+  size_t len = sizeof (buf);
   char *p;
   char src_resource_ue[DPL_URL_LENGTH(strlen(req->src_resource)) + 1];
 
@@ -232,15 +232,17 @@ add_source_to_headers(const dpl_req_t *req,
 
   p = buf;
 
-  DPL_APPEND_STR("/");
-  DPL_APPEND_STR(req->src_bucket);
-  DPL_APPEND_STR(src_resource_ue);
+  if (dpl_append_str("/", &p, &len) != DPL_SUCCESS
+    || dpl_append_str(req->src_bucket, &p, &len) != DPL_SUCCESS
+    || dpl_append_str(src_resource_ue, &p, &len) != DPL_SUCCESS)
+       return DPL_FAILURE;
 
   //subresource and query params
   if (NULL != req->src_subresource)
     {
-      DPL_APPEND_STR("?");
-      DPL_APPEND_STR(req->src_subresource);
+      if (dpl_append_str("?", &p, &len) != DPL_SUCCESS
+        || dpl_append_str(req->src_subresource, &p, &len) != DPL_SUCCESS)
+         return DPL_FAILURE;
     }
 
   DPL_APPEND_CHAR(0);
@@ -569,7 +571,7 @@ dpl_s3_req_build(const dpl_req_t *req,
 dpl_status_t
 dpl_s3_req_gen_url(const dpl_req_t *req,
                    dpl_dict_t *headers,
-                   char *buf, int len,
+                   char *buf, size_t len,
                    unsigned int *lenp)
 {
   int           bucket;
@@ -593,20 +595,23 @@ dpl_s3_req_gen_url(const dpl_req_t *req,
   p = buf;
 
   if (req->ctx->use_https)
-    DPL_APPEND_STR("https");
+    if (dpl_append_str("https", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
   else
-    DPL_APPEND_STR("http");
-  DPL_APPEND_STR("://");
-  
-  DPL_APPEND_STR(req->host);
+    if (dpl_append_str("http", &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
+  if (dpl_append_str("://", &p, &len) != DPL_SUCCESS
+    || dpl_append_str(req->host, &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
 
   if (( req->ctx->use_https && strcmp(req->port, "443")) ||
       (!req->ctx->use_https && strcmp(req->port, "80"))) {
-    DPL_APPEND_STR(":");
-    DPL_APPEND_STR(req->port);
+    if (dpl_append_str(":", &p, &len) != DPL_SUCCESS
+      || dpl_append_str(req->port, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
-
-  DPL_APPEND_STR(resource_ue);
+  if (dpl_append_str(resource_ue, &p, &len) != DPL_SUCCESS)
+    return DPL_FAILURE;
 
   if (req->ctx->aws_auth_sign_version == 2)
     ret = dpl_s3_get_authorization_v2_params(req, query_params, NULL);
@@ -622,14 +627,17 @@ dpl_s3_req_gen_url(const dpl_req_t *req,
     while (param != NULL) {
       if (ret == DPL_SUCCESS) {
         if (is_first_param) {
-          DPL_APPEND_STR("?");
+          if (dpl_append_str("?", &p, &len) != DPL_SUCCESS)
+            return DPL_FAILURE;
           is_first_param = 0;
         } else
-          DPL_APPEND_STR("&");
+          if (dpl_append_str("&", &p, &len) != DPL_SUCCESS)
+            return DPL_FAILURE;
 
-        DPL_APPEND_STR(param->key);
-        DPL_APPEND_STR("=");
-        DPL_APPEND_STR(dpl_sbuf_get_str(param->val->string));
+        if (dpl_append_str(param->key, &p, &len) != DPL_SUCCESS
+          || dpl_append_str("=", &p, &len) != DPL_SUCCESS
+          || dpl_append_str(dpl_sbuf_get_str(param->val->string), &p, &len) != DPL_SUCCESS)
+           return DPL_FAILURE;
       }
 
       param = param->prev;

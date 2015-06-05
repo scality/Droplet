@@ -59,7 +59,7 @@ dpl_s3_make_signature_v2(dpl_ctx_t *ctx,
                          char *date,
                          dpl_dict_t *headers,
                          char *buf,
-                         unsigned int len,
+                         size_t len,
                          unsigned int *lenp)
 {
   char *p;
@@ -69,29 +69,36 @@ dpl_s3_make_signature_v2(dpl_ctx_t *ctx,
   p = buf;
 
   //method
-  DPL_APPEND_STR(method);
-  DPL_APPEND_STR("\n");
+  if (dpl_append_str(method, &p, &len) != DPL_SUCCESS
+    || dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+		return DPL_FAILURE;
 
   //md5
   if (headers != NULL) {
     value = dpl_dict_get_value(headers, "Content-MD5");
     if (NULL != value)
-      DPL_APPEND_STR(value);
+      if (dpl_append_str(value, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
-  DPL_APPEND_STR("\n");
+  if (dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+    return DPL_FAILURE;
 
   //content type
   if (headers != NULL) {
     value = dpl_dict_get_value(headers, "Content-Type");
     if (NULL != value)
-      DPL_APPEND_STR(value);
+      if (dpl_append_str(value, &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
-  DPL_APPEND_STR("\n");
+  if (dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+    return DPL_FAILURE;
 
   //expires or date
   if (date != NULL)
-    DPL_APPEND_STR(date);
-  DPL_APPEND_STR("\n");
+    if (dpl_append_str(date, &p, &len) != DPL_SUCCESS)
+      return DPL_FAILURE;
+  if (dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+    return DPL_FAILURE;
 
   //x-amz headers
   if (headers != NULL) {
@@ -129,10 +136,11 @@ dpl_s3_make_signature_v2(dpl_ctx_t *ctx,
         continue;
 
       assert(DPL_VALUE_STRING == var->val->type);
-      DPL_APPEND_STR(var->key);
-      DPL_APPEND_STR(":");
-      DPL_APPEND_STR(dpl_sbuf_get_str(var->val->string));
-      DPL_APPEND_STR("\n");
+      if (dpl_append_str(var->key, &p, &len) != DPL_SUCCESS
+        || dpl_append_str(":", &p, &len) != DPL_SUCCESS
+        || dpl_append_str(dpl_sbuf_get_str(var->val->string), &p, &len) != DPL_SUCCESS
+        || dpl_append_str("\n", &p, &len) != DPL_SUCCESS)
+          return DPL_FAILURE;
     }
 
     dpl_vec_free(vec);
@@ -140,16 +148,18 @@ dpl_s3_make_signature_v2(dpl_ctx_t *ctx,
 
   //resource
   if (NULL != bucket) {
-    DPL_APPEND_STR("/");
-    DPL_APPEND_STR(bucket);
+    if (dpl_append_str("/", &p, &len) != DPL_SUCCESS
+     || dpl_append_str(bucket, &p, &len) != DPL_SUCCESS)
+       return DPL_FAILURE;
   }
 
   if (NULL != resource)
-    DPL_APPEND_STR(resource);
-
+    if (dpl_append_str(resource, &p, &len) != DPL_SUCCESS)
+       return DPL_FAILURE;
   if (NULL != subresource) {
-    DPL_APPEND_STR("?");
-    DPL_APPEND_STR(subresource);
+    if (dpl_append_str("?", &p, &len) != DPL_SUCCESS
+     || dpl_append_str(subresource, &p, &len) != DPL_SUCCESS)
+       return DPL_FAILURE;
   }
 
   if (NULL != lenp)

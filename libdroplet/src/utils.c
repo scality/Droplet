@@ -1079,21 +1079,25 @@ dpl_log(dpl_ctx_t *ctx,
   case DPL_ERROR: level_name = "error"; break;
   }
   if (level_name) {
-    DPL_APPEND_STR(level_name);
-    DPL_APPEND_STR(": ");
+    if (dpl_append_str(level_name, &p, &len) != DPL_SUCCESS
+      || dpl_append_str(": ", &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
 
   if (file) {
-    DPL_APPEND_STR(file);
-    DPL_APPEND_CHAR(':');
+    if (dpl_append_str(file, &p, &len) != DPL_SUCCESS
+      || dpl_append_str(":", &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
     snprintf(linebuf, sizeof(linebuf), "%d", lineno);
-    DPL_APPEND_STR(linebuf);
-    DPL_APPEND_STR(": ");
+    if (dpl_append_str(linebuf, &p, &len) != DPL_SUCCESS
+      || dpl_append_str(": ", &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
 
   if (func) {
-    DPL_APPEND_STR(func);
-    DPL_APPEND_STR(": ");
+    if (dpl_append_str(func, &p, &len) != DPL_SUCCESS
+      || dpl_append_str(": ", &p, &len) != DPL_SUCCESS)
+        return DPL_FAILURE;
   }
 
   va_start(args, fmt);
@@ -1288,4 +1292,20 @@ dpl_get_xattrs(char *path, dpl_dict_t *dict, char *prefix, int do_64encode)
     }
 
   return ret;
+}
+
+dpl_status_t
+dpl_append_str(const char *str_to_add, char **buff, size_t *size_buff)
+{
+  size_t  len_str_to_add;
+
+  if (str_to_add == NULL)
+    return DPL_FAILURE;
+  len_str_to_add = strlen(str_to_add);
+  if (*size_buff < len_str_to_add)
+    return DPL_FAILURE;
+  memcpy(*buff, str_to_add, len_str_to_add);
+  *buff += len_str_to_add;
+  *size_buff -= len_str_to_add;
+  return DPL_SUCCESS;
 }
