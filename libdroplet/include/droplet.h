@@ -549,6 +549,7 @@ typedef struct dpl_ctx
   int url_encoding;          /*!< some servers does not handle url encoding */
   int max_redirects;         /*!< maximum number of redirects */
   int preserve_root_path;    /*!< Preserve "/" for root path access in HTTP requests */
+  int virtual_hosting;       /*!< Enables virtual hosting (domain names) in URLs */
   uint32_t enterprise_number; /*!< for generating native IDs */
   struct dpl_backend_s *backend;
 

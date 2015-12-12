@@ -562,6 +562,18 @@ conf_cb_func(void *cb_arg,
     {
       ctx->write_timeout = strtoul(value, NULL, 0);
     }
+  else if (! strcmp(var, "virtual_hosting"))
+    {
+      if (!strcasecmp(value, "true"))
+        ctx->virtual_hosting = 1;
+      else if (!strcasecmp(value, "false"))
+        ctx->virtual_hosting = 0;
+      else
+        {
+          DPL_LOG(ctx, DPL_ERROR, "invalid boolean value for '%s'", var);
+          return -1;
+        }
+    }
   else if (! strcmp(var, "droplet_dir") ||
 	   ! strcmp(var, "profile_name"))
     {
@@ -672,6 +684,7 @@ dpl_profile_default(dpl_ctx_t *ctx)
   ctx->keep_alive = 1;
   ctx->url_encoding = 1;
   ctx->preserve_root_path = 0;
+  ctx->virtual_hosting = 1;
   ctx->max_redirects = DPL_DEFAULT_MAX_REDIRECTS;
   ctx->enterprise_number = DPL_DEFAULT_ENTERPRISE_NUMBER;
   ctx->base_path = strdup(DPL_DEFAULT_BASE_PATH);
