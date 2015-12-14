@@ -27,6 +27,7 @@ alltests_SOURCES = \
 	tests/util_utest.c \
 	tests/vec_utest.c \
 	tests/sproxyd_utest.c \
+	tests/httpreq_utest.c \
 	tests/s3/auth_common_utest.c \
 	tests/s3/auth_v2_utest.c \
 	tests/s3/auth_v4_utest.c \

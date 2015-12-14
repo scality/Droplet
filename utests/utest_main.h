@@ -16,6 +16,7 @@ extern Suite    *getdate_suite(void);
 extern Suite    *util_suite(void);
 extern Suite    *profile_suite(void);
 extern Suite    *sproxyd_suite(void);
+extern Suite    *httpreq_suite(void);
 
 /* S3 backend tests */
 extern Suite    *s3_auth_v2_suite(void);
