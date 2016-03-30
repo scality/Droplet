@@ -672,6 +672,7 @@ dpl_profile_default(dpl_ctx_t *ctx)
   ctx->keep_alive = 1;
   ctx->url_encoding = 1;
   ctx->preserve_root_path = 0;
+  ctx->empty_folder_emulation = 1;
   ctx->max_redirects = DPL_DEFAULT_MAX_REDIRECTS;
   ctx->enterprise_number = DPL_DEFAULT_ENTERPRISE_NUMBER;
   ctx->base_path = strdup(DPL_DEFAULT_BASE_PATH);
