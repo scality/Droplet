@@ -592,10 +592,10 @@ dpl_s3_req_gen_url(const dpl_req_t *req,
 
   p = buf;
 
-  if (req->ctx->use_https)
-    DPL_APPEND_STR("https");
-  else
-    DPL_APPEND_STR("http");
+  DPL_APPEND_STR("http");
+  if (req->ctx->use_https) {
+    DPL_APPEND_STR("s");
+  }
   DPL_APPEND_STR("://");
   
   DPL_APPEND_STR(req->host);
