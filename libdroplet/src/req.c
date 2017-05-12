@@ -99,7 +99,10 @@ dpl_req_new(dpl_ctx_t *ctx)
     goto bad;
 
   //virtual hosting is prefered since it "disperses" connections
-  req->behavior_flags = DPL_BEHAVIOR_KEEP_ALIVE|DPL_BEHAVIOR_VIRTUAL_HOSTING;
+  req->behavior_flags = DPL_BEHAVIOR_KEEP_ALIVE;
+
+  if (ctx->virtual_hosting)
+    req->behavior_flags |= DPL_BEHAVIOR_VIRTUAL_HOSTING;
 
   return req;
 

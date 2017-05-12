@@ -259,6 +259,9 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
   char *p;
   char *method = dpl_method_str(req->method);
   char *resource_ue = NULL;
+  char *tmp_resource;
+  int resource_len;
+  int bucket_len;
 
   DPL_TRACE(req->ctx, DPL_TRACE_REQ, "req_gen_http_request resource=%s", req->resource);
 
@@ -266,7 +269,30 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
 
   //resource
   if (NULL != req->resource) {
-    resource_ue = malloc(DPL_URL_LENGTH(strlen(req->resource)) + 3);
+
+    resource_len = strlen(req->resource);
+
+    if ((req->behavior_flags & DPL_BEHAVIOR_VIRTUAL_HOSTING) ||
+        req->bucket == NULL) {
+      tmp_resource = req->resource;
+    } else {
+      int need_slash = 0;
+
+      //path style access
+      bucket_len = strlen(req->bucket);
+      tmp_resource = alloca(bucket_len + 1 + resource_len + 1);
+      memcpy(tmp_resource, req->bucket, bucket_len);
+      if (*req->resource != '/') {
+        tmp_resource[bucket_len] = '/';
+        need_slash = 1;
+      }
+      memcpy(tmp_resource + bucket_len + need_slash,
+             req->resource, resource_len);
+      resource_len = bucket_len + need_slash + resource_len; 
+      tmp_resource[resource_len] = 0;
+    }
+
+    resource_ue = malloc(DPL_URL_LENGTH(resource_len) + 3);
     if (resource_ue == NULL) {
       ret = DPL_ENOMEM;
       goto end;
@@ -275,26 +301,26 @@ dpl_req_gen_http_request(dpl_ctx_t *ctx,
     if (ctx->url_encoding) {
       if (ctx->encode_slashes) {
         resource_ue[0] = '/';
-        if (*req->resource != '/')
-          dpl_url_encode(req->resource, resource_ue + 1);
+        if (*tmp_resource != '/')
+          dpl_url_encode(tmp_resource, resource_ue + 1);
         else
-          dpl_url_encode(req->resource + 1, resource_ue + 1);
+          dpl_url_encode(tmp_resource + 1, resource_ue + 1);
       } else {
-        if (*req->resource != '/') {
+        if (*tmp_resource != '/') {
           resource_ue[0] = '/';
-          dpl_url_encode_no_slashes(req->resource, resource_ue + 1);
+          dpl_url_encode_no_slashes(tmp_resource, resource_ue + 1);
         } else
-          dpl_url_encode_no_slashes(req->resource, resource_ue);
+          dpl_url_encode_no_slashes(tmp_resource, resource_ue);
       }
     } else {
-      if (*req->resource != '/') {
+      if (*tmp_resource != '/') {
         resource_ue[0] = '/';
-        strcpy(resource_ue + 1, req->resource);
+        strcpy(resource_ue + 1, tmp_resource);
       } else
-        strcpy(resource_ue, req->resource);
+        strcpy(resource_ue, tmp_resource);
     }
   }
-      
+
   //method
   DPL_APPEND_STR(method);
 
